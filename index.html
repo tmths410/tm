@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>통합 웹앱 포털</title>
+  <style>
+    /* 기본 페이지 설정 */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f8f9fa;
+    }
+
+    /* 상단 탭 내비게이션 바 */
+    #tabs-bar {
+      display: flex;
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 10px 10px 0 10px;
+      gap: 5px;
+      overflow-x: auto; /* 탭이 많아지면 가로 스크롤 허용 */
+      white-space: nowrap;
+    }
+
+    /* 개별 탭 스타일 */
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #f1f3f5;
+      border: 1px solid #dee2e6;
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      color: #495057;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .tab:hover {
+      background-color: #e9ecef;
+    }
+
+    .tab.active {
+      background-color: #ffffff;
+      color: #228be6;
+      font-weight: bold;
+      border-top: 3px solid #228be6;
+    }
+
+    /* 앱이 표시될 영역 */
+    #apps-container {
+      flex-grow: 1;
+      position: relative;
+    }
+
+    /* 각각의 Iframe 스타일 */
+    .app-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none; /* 기본적으로 숨김 */
+    }
+
+    .app-frame.active {
+      display: block; /* 활성화된 앱만 표시 */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 탭 버튼들이 들어갈 영역 -->
+  <div id="tabs-bar"></div>
+
+  <!-- 웹앱(Iframe)들이 들어갈 영역 -->
+  <div id="apps-container"></div>
+
+  <script>
+    // ⚙️ 1. 이곳에 새로운 웹앱을 계속 추가하세요.
+    // name: 탭에 표시될 이름, url: Vercel에 배포된 웹앱 주소
+    const appList = [
+      { name: "교사 시간표 시스템", url: "https://timetable-tm.vercel.app/" },
+      { name: "월중계획표", url: "https://calendar-tm.vercel.app/" },
+      { name: "학생 생활지도 관리 시스템", url: "https://school-rules.vercel.app/" },
+      // 새 앱을 추가하려면 아래 형식으로 쉼표(,)를 찍고 추가하면 됩니다.
+      // { name: "새로운 웹앱", url: "https://new-app.vercel.app" }
+    ];
+
+    const tabsBar = document.getElementById('tabs-bar');
+    const appsContainer = document.getElementById('apps-container');
+
+    // 2. 앱 리스트를 기반으로 탭과 Iframe 자동 생성
+    appList.forEach((app, index) => {
+      // 탭 버튼 생성
+      const tabBtn = document.createElement('div');
+      tabBtn.className = 'tab';
+      tabBtn.textContent = app.name;
+      
+      // Iframe 생성
+      const iframe = document.createElement('iframe');
+      iframe.className = 'app-frame';
+      iframe.src = app.url;
+
+      // 탭 클릭 이벤트 설정
+      tabBtn.onclick = () => {
+        // 모든 탭과 Iframe 비활성화
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.app-frame').forEach(f => f.classList.remove('active'));
+        
+        // 클릭한 탭과 해당 Iframe만 활성화
+        tabBtn.classList.add('active');
+        iframe.classList.add('active');
+      };
+
+      tabsBar.appendChild(tabBtn);
+      appsContainer.appendChild(iframe);
+    });
+
+    // 3. 페이지 로드 시 첫 번째 탭 자동 실행
+    if (appList.length > 0) {
+      tabsBar.children[0].click();
+    }
+  </script>
+</body>
+</html>
